@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">SSL Tester</string>
+    <string name="app_desc">Diese App listet alle brauchbaren Cipher Suites auf, die vom Smartphone unterstützt werden.</string><string name="action_settings">Settings</string>
+    <string name="str_protocols">Protokolle:</string>
+    <string name="str_cipher">Cipher Suites:</string>
+    
+
+</resources>
