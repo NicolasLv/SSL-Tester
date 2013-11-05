@@ -83,7 +83,7 @@ public class MainActivity extends Activity
 						{
 							tv.removeAllViews();
 							TextView t = new TextView(MainActivity.this);
-							t.setText("Konnte SSLSocket für '" + host + "' nicht öffnen. Ist eine Internetverbindung vorhanden?");
+							t.setText("Couldn't open SSLSocket for '" + host + "'. Is an internet connection available?");
 							tv.addView(t);
 						}
 						else
@@ -105,7 +105,7 @@ public class MainActivity extends Activity
 							else
 							{
 								TextView t = new TextView(MainActivity.this);
-								t.setText("keine");
+								t.setText("none");
 								tv.addView(t, pos);								
 							}
 							pos += 2;
@@ -123,7 +123,7 @@ public class MainActivity extends Activity
 							else
 							{
 								TextView t = new TextView(MainActivity.this);
-								t.setText("keine");
+								t.setText("none");
 								tv.addView(t, pos);	
 							}	
 						}
