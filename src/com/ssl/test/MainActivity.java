@@ -1,14 +1,10 @@
 package com.ssl.test;
 
 import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import android.os.Bundle;
 import android.app.Activity;
 import android.widget.LinearLayout;
@@ -59,7 +55,9 @@ public class MainActivity extends Activity
 	"TLS_RSA_WITH_AES_128_GCM_SHA256",
 	"TLS_RSA_WITH_AES_256_CBC_SHA",
 	"TLS_RSA_WITH_AES_128_CBC_SHA",
-	"TLS_RSA_WITH_3DES_EDE_CBC_SHA"};
+	"TLS_RSA_WITH_3DES_EDE_CBC_SHA",
+	"TLS_EMPTY_RENEGOTIATION_INFO_SCSV"};
+	private static int pos = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -82,50 +80,42 @@ public class MainActivity extends Activity
 						if ((sup_protocols == null) || (sup_ciphers == null))
 						{
 							tv.removeAllViews();
-							TextView t = new TextView(MainActivity.this);
-							t.setText("Couldn't open SSLSocket for '" + host + "'. Is an internet connection available?");
-							tv.addView(t);
+							addTextView("Couldn't open SSLSocket for '" + host + "'. Is an internet connection available?");
 						}
 						else
 						{
-							int pos = 1;
 							String[] protocols = matchStringArr(sec_protocols, sup_protocols);
 							String[] ciphers = matchStringArr(sec_ciphers, sup_ciphers);
-	
+
 							if (protocols.length > 0)
 							{
+								addTextView("Protocols:");
 								for (String p : protocols)
-								{
-									TextView t = new TextView(MainActivity.this);
-									t.setText(p);
-									tv.addView(t, pos);
-									pos++;
-								}
+									addTextView(p);
 							}
 							else
 							{
-								TextView t = new TextView(MainActivity.this);
-								t.setText("none");
-								tv.addView(t, pos);								
+								addTextView("none");
 							}
-							pos += 2;
-	
+							addTextView("");
+
 							if (ciphers.length > 0)
 							{
+								addTextView("Cipher Suites:");
 								for (String c : ciphers)
 								{
-									TextView t = new TextView(MainActivity.this);
-									t.setText(c);
-									tv.addView(t, pos);
-									pos++;
+									if (!c.equals("TLS_EMPTY_RENEGOTIATION_INFO_SCSV"))
+										addTextView(c);
 								}
 							}
 							else
 							{
-								TextView t = new TextView(MainActivity.this);
-								t.setText("none");
-								tv.addView(t, pos);	
-							}	
+								addTextView("none");
+							}
+							addTextView("");
+
+							if (ciphers[ciphers.length-1].equals("TLS_EMPTY_RENEGOTIATION_INFO_SCSV"))
+								addTextView("Secure Client-Initiated Renegotiation supported.");
 						}
 					}
 				});
@@ -136,30 +126,32 @@ public class MainActivity extends Activity
 			{
 				try
 				{
-					TrustManager tm = new X509TrustManager()
-					{
-						public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException { }
-						public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException { }
-						public X509Certificate[] getAcceptedIssuers() { return null; }
-					};
 					SSLContext context = SSLContext.getInstance("TLS");
-					context.init(null, new TrustManager[] { tm }, new SecureRandom());
+					context.init(null, null, new SecureRandom());
 					SSLSocket socket = (SSLSocket)context.getSocketFactory().createSocket(host, port);
 					sup_protocols = socket.getSupportedProtocols();
 					sup_ciphers = socket.getSupportedCipherSuites();
-					socket.close();			
+					socket.close();
 				}
 				catch (Exception e)
 				{
 					e.printStackTrace();
-				}		
+				}
 				updateUI();
 			}
 		});
 		worker.start();
 	}
 
-	public static String[] matchStringArr(String[] a, String[] b)
+	private void addTextView(String str)
+	{
+		TextView t = new TextView(MainActivity.this);
+		t.setText(str);
+		tv.addView(t, pos);
+		pos++;
+	}
+
+	private static String[] matchStringArr(String[] a, String[] b)
 	{
 		List<String> list = new ArrayList<String>();
 		for (int i=0; i<a.length; i++)
