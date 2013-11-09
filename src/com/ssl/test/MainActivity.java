@@ -161,18 +161,18 @@ public class MainActivity extends Activity
 
 	public static String[] matchStringArr(String[] a, String[] b)
 	{
-			List<String> list = new ArrayList<String>();
-			for (int i=0; i<a.length; i++)
+		List<String> list = new ArrayList<String>();
+		for (int i=0; i<a.length; i++)
+		{
+			for (int j=0; j<b.length; j++)
 			{
-					for (int j=0; j<b.length; j++)
-					{
-							if (a[i] == b[j])
-							{
-									list.add(a[i]);
-									break;
-							}
-					}
+				if (a[i].equals(b[j]))
+				{
+					list.add(a[i]);
+					break;
+				}
 			}
-			return list.toArray(new String[list.size()]);
+		}
+		return list.toArray(new String[list.size()]);
 	}
 }
